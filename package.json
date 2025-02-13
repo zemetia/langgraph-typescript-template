@@ -1,0 +1,16 @@
+{
+  "name": "Typescript_LangChain_Project",
+  "version": "1.0.0",
+  "description": "langchain typescript basic template",
+  "main": "app.ts",
+  "repository": "git@github.com:zemetia/langgraph-typescript-template.git",
+  "author": "zemetia",
+  "license": "MIT",
+  "dependencies": {
+    "@langchain/cohere": "^0.3.2",
+    "@langchain/core": "^0.3.40",
+    "@langchain/langgraph": "^0.2.46",
+    "langchain": "^0.3.15",
+    "zod": "^3.24.2"
+  }
+}
