@@ -5,11 +5,11 @@ import { HumanMessage } from "@langchain/core/messages"
 import { supervisorLlm } from "../Agents/Supervisor/supervisorLLM"
 
 const supervisorAgentChain = async () => {
-    (await supervisorLlm()).invoke({
-        messages: [
-          new HumanMessage({
-            content: "write a report on birds.",
-          }),
-        ],
-      })
+  (await supervisorLlm()).invoke({
+    messages: [
+      new HumanMessage({
+        content: "write a report on birds.",
+      }),
+    ],
+  })
 }
