@@ -13,5 +13,3 @@ langchain
 @types/d3
 zod
 ```
-
-This tutorial is from https://github.com/langchain-ai/langgraphjs/blob/main/examples/multi_agent/hierarchical_agent_teams.ipynb
