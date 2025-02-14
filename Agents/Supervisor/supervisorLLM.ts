@@ -1,50 +1,69 @@
-import { z } from "zod";
-import { ChatCohere } from "@langchain/cohere";
+// import { z } from "zod";
+// import { ChatCohere } from "@langchain/cohere";
 
-import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
+import { createTeamSupervisor } from "../../Helper/helper";
+import { docWritingLlm } from "../DocWriter/DocWriterLLM";
+import { researchTeamLlm } from "../Search/SearchLLM";
+import { researchTeamSupervisorPrompt, docWritingSupervisorPrompt } from "./supervisorPrompts";
 
-import { AIMessageChunk } from "@langchain/core/messages";
-import { systemPrompt, workerPrompt } from "./supervisorPrompts";
-import { END } from "@langchain/langgraph";
 
-export const members = ["researcher", "chart_generator"] as const;
+// import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 
-export const supervisorLlm = async () => {
+// import { AIMessageChunk } from "@langchain/core/messages";
+// import { systemPrompt, workerPrompt } from "./supervisorPrompts";
+// import { END } from "@langchain/langgraph";
+
+// export const members = ["researcher", "chart_generator"] as const;
+
+// export const supervisorLlm = async () => {
     
-    const options = [END, ...members];
+//     const options = [END, ...members];
 
-    const routingTool = {
-        name: "route",
-        description: "Select the next role.",
-        schema: z.object({
-          next: z.enum([END, ...members]),
-        }),
-    }
+//     const routingTool = {
+//         name: "route",
+//         description: "Select the next role.",
+//         schema: z.object({
+//           next: z.enum([END, ...members]),
+//         }),
+//     }
 
-    const prompt = ChatPromptTemplate.fromMessages([
-        ["system", systemPrompt],
-        new MessagesPlaceholder("messages"),
-        ["human", workerPrompt],
-    ]);
+//     const prompt = ChatPromptTemplate.fromMessages([
+//         ["system", systemPrompt],
+//         new MessagesPlaceholder("messages"),
+//         ["human", workerPrompt],
+//     ]);
 
-    const formattedPrompt = await prompt.partial({
-        options: options.join(", "),
-        members: members.join(", "),
-    });
+//     const formattedPrompt = await prompt.partial({
+//         options: options.join(", "),
+//         members: members.join(", "),
+//     });
 
-    const llm = new ChatCohere({
-        model: "command-r",
-        temperature: 0,
-    });
+//     const llm = new ChatCohere({
+//         model: "command-r",
+//         temperature: 0,
+//     });
 
-    return formattedPrompt
-    .pipe(llm.bindTools(
-      [routingTool],
-      {
-        tool_choice: "route",
-      },
-    ))
-    // select the first one
-    .pipe((x: AIMessageChunk) => (x?.tool_calls[0].args));
+//     return formattedPrompt
+//     .pipe(llm.bindTools(
+//       [routingTool],
+//       {
+//         tool_choice: "route",
+//       },
+//     ))
+//     // select the first one
+//     .pipe((x: AIMessageChunk) => (x?.tool_calls[0].args));
 
-}
+// }
+
+const supervisorAgent = await createTeamSupervisor(
+  researchTeamLlm,
+  researchTeamSupervisorPrompt,
+  ["Search", "WebScraper"],
+);
+
+const docTeamMembers = ["DocWriter", "NoteTaker", "ChartGenerator"];
+const docWritingSupervisor = await createTeamSupervisor(
+  docWritingLlm,
+  docWritingSupervisorPrompt,
+  docTeamMembers,
+);
